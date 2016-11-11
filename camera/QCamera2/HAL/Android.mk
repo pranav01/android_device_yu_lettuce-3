@@ -17,6 +17,12 @@ LOCAL_SRC_FILES := \
         wrapper/QualcommCamera.cpp
 
 LOCAL_CFLAGS = -Wall -Wextra -Werror
+LOCAL_CFLAGS += -DHAS_MULTIMEDIA_HINTS
+
+#use media extension
+#ifeq ($(TARGET_USES_MEDIA_EXTENSIONS), true)
+LOCAL_CFLAGS += -DUSE_MEDIA_EXTENSIONS
+#endif
 
 #Debug logs are enabled
 #LOCAL_CFLAGS += -DDISABLE_DEBUG_LOG
@@ -53,6 +59,11 @@ else
 LOCAL_CFLAGS += -DUSE_KK_CODE
 endif
 
+LOCAL_C_INCLUDES += \
+        $(TARGET_OUT_HEADERS)/qcom/display
+LOCAL_C_INCLUDES += \
+        $(call project-path-for,qcom-display)/libqservice
+
 #ifeq ($(TARGET_USE_VENDOR_CAMERA_EXT),true)
 #LOCAL_C_INCLUDES += $(call project-path-for,qcom-display)/libgralloc
 #else
@@ -71,8 +82,11 @@ LOCAL_SHARED_LIBRARIES += libmmcamera_interface libmmjpeg_interface libqdMetaDat
 ifeq ($(TARGET_TS_MAKEUP),true)
 LOCAL_SHARED_LIBRARIES += libts_face_beautify_hal libts_detected_face_hal
 endif
+LOCAL_SHARED_LIBRARIES += libqdMetaData libqservice libbinder
+
 LOCAL_MODULE_RELATIVE_PATH    := hw
 LOCAL_MODULE := camera.$(TARGET_BOARD_PLATFORM)
+LOCAL_CLANG := false
 LOCAL_32_BIT_ONLY := true
 LOCAL_MODULE_TAGS := optional
 
